@@ -13,7 +13,7 @@ instead of the single-team demo it is today. It's organized as "what breaks firs
 - **Data model**: `Officer`, `Department`, `TrainingProgramme`, `Nomination`, with a
   `UNIQUE(officer_id, programme_id)` constraint on `nominations` as the source of truth
   for "no duplicate nominations" (`backend/.../entity/Nomination.java`).
-- **Schema management**: `spring.jpa.hibernate.ddl-auto=update` — Hibernate mutates the
+- **Schema management**: `spring.jpa.hibernate.ddl-auto=update` - Hibernate mutates the
   schema on boot (`application.properties`). Fine for a demo, unsafe for production.
 - **CORS**: hardcoded to `http://localhost:5173` in `WebConfig.java`.
 
@@ -45,10 +45,10 @@ means the next step is mechanical rather than a rewrite:
 2. **Move the database off the same box**, onto a managed PostgreSQL service (RDS/Cloud
    SQL/Azure Database) with:
    - **Read replicas** for the read-heavy endpoints (`GET /api/officers`,
-     `/departments`, `/programmes`, nomination listings) — these vastly outnumber writes
+     `/departments`, `/programmes`, nomination listings) - these vastly outnumber writes
      (nominating).
    - Automated backups and point-in-time recovery.
-3. **Add a cache** (Redis) in front of rarely-changing reference data — departments and
+3. **Add a cache** (Redis) in front of rarely-changing reference data - departments and
    the officer directory don't change per-request, so cache them with a short TTL or
    invalidate on write, instead of hitting Postgres on every page load.
 4. **Serve the frontend as static assets from a CDN** (`npm run build` output), not from
