@@ -44,14 +44,16 @@ public class DataSeeder implements CommandLineRunner {
         Department it = departmentRepository.save(new Department("IT Division"));
         Department procurement = departmentRepository.save(new Department("Procurement Division"));
 
-        officerRepository.save(new Officer("EMP001", "A. Perera", finance));
-        officerRepository.save(new Officer("EMP002", "S. Fernando", admin));
-        officerRepository.save(new Officer("EMP003", "N. Silva", hr));
-        officerRepository.save(new Officer("EMP004", "K. Jayawardena", it));
-        officerRepository.save(new Officer("EMP005", "R. Wickramasinghe", procurement));
-        officerRepository.save(new Officer("EMP006", "D. Gunasekara", finance));
-        officerRepository.save(new Officer("EMP007", "M. Rathnayake", admin));
-        officerRepository.save(new Officer("EMP008", "T. Bandara", hr));
+        // grade + joinedDate filled in so Task 3's GRADE / MIN_YEARS_OF_SERVICE
+        // eligibility rules have real data to evaluate against out of the box.
+        officerRepository.save(officer("EMP001", "A. Perera", finance, "Officer", LocalDate.now().minusYears(2)));
+        officerRepository.save(officer("EMP002", "S. Fernando", admin, "Senior Officer", LocalDate.now().minusYears(6)));
+        officerRepository.save(officer("EMP003", "N. Silva", hr, "Officer", LocalDate.now().minusYears(1)));
+        officerRepository.save(officer("EMP004", "K. Jayawardena", it, "Senior Officer", LocalDate.now().minusYears(8)));
+        officerRepository.save(officer("EMP005", "R. Wickramasinghe", procurement, "Officer", LocalDate.now().minusYears(3)));
+        officerRepository.save(officer("EMP006", "D. Gunasekara", finance, "Director", LocalDate.now().minusYears(12)));
+        officerRepository.save(officer("EMP007", "M. Rathnayake", admin, "Officer", LocalDate.now().minusMonths(6)));
+        officerRepository.save(officer("EMP008", "T. Bandara", hr, "Senior Officer", LocalDate.now().minusYears(5)));
 
         TrainingProgramme programme = new TrainingProgramme();
         programme.setTitle("Public Financial Management Workshop");
@@ -59,6 +61,14 @@ public class DataSeeder implements CommandLineRunner {
         programme.setVenue("Main Auditorium");
         programme.setTrainer("Dr. C. Amarasinghe");
         programme.setMaxParticipants(50);
+        programme.setProgrammeCode("PUB-FIN-MGMT");
         programmeRepository.save(programme);
+    }
+
+    private Officer officer(String employeeNo, String name, Department department, String grade, LocalDate joinedDate) {
+        Officer officer = new Officer(employeeNo, name, department);
+        officer.setGrade(grade);
+        officer.setJoinedDate(joinedDate);
+        return officer;
     }
 }

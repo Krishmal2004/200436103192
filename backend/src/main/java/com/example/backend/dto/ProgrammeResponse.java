@@ -9,6 +9,7 @@ public record ProgrammeResponse(
         String venue,
         String trainer,
         Integer maxParticipants,
-        long confirmedCount
+        long confirmedCount,
+        String programmeCode
 ) {
 }

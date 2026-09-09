@@ -55,6 +55,8 @@ public class OfficerController {
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found: " + request.departmentId()));
 
         Officer officer = new Officer(request.employeeNo(), request.name(), department);
+        officer.setGrade(request.grade());
+        officer.setJoinedDate(request.joinedDate());
         return toResponse(officerRepository.save(officer));
     }
 
@@ -64,7 +66,9 @@ public class OfficerController {
                 o.getEmployeeNo(),
                 o.getName(),
                 o.getDepartment().getId(),
-                o.getDepartment().getName()
+                o.getDepartment().getName(),
+                o.getGrade(),
+                o.getJoinedDate()
         );
     }
 }

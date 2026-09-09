@@ -45,6 +45,13 @@ public class ProgrammeController {
         programme.setVenue(request.venue());
         programme.setTrainer(request.trainer());
         programme.setMaxParticipants(request.maxParticipants());
+        // Defaults to title so every programme always has a code to group
+        // sessions by for the cooldown rule — see docs/task03_workflow.md.
+        programme.setProgrammeCode(
+                request.programmeCode() != null && !request.programmeCode().isBlank()
+                        ? request.programmeCode()
+                        : request.title()
+        );
         return toResponse(programmeRepository.save(programme));
     }
 
@@ -57,7 +64,8 @@ public class ProgrammeController {
                 p.getVenue(),
                 p.getTrainer(),
                 p.getMaxParticipants(),
-                confirmed
+                confirmed,
+                p.getProgrammeCode()
         );
     }
 }

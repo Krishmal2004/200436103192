@@ -69,8 +69,12 @@ class NominationCapacityScenarioTest {
         // Nominate 60 distinct officers, in order, for the one 40-seat programme.
         List<NominationResponse> responses = new ArrayList<>();
         for (int i = 1; i <= TOTAL_NOMINATIONS; i++) {
+            // "CAPTEST-" rather than "CYB-": testing_data/seed-60-participants.js
+            // persists real CYB-001..CYB-060 officers in the dev database (it
+            // doesn't roll back like this test does), so reusing that prefix
+            // here would collide with real, permanent rows on a shared dev DB.
             Officer officer = officerRepository.save(
-                    new Officer(String.format("CYB-%03d", i), "Test Officer " + i, department));
+                    new Officer(String.format("CAPTEST-%03d", i), "Test Officer " + i, department));
 
             NominationRequest request = new NominationRequest(
                     programme.getId(), officer.getId(), department.getId(), "Scenario test");

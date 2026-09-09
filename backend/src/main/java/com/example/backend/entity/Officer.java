@@ -1,5 +1,7 @@
 package com.example.backend.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,6 +29,15 @@ public class Officer {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
+
+    // Both nullable: existing officers predate Task 3 and won't have these
+    // set until HR backfills them. A null grade/joinedDate fails a
+    // GRADE/MIN_YEARS_OF_SERVICE eligibility check closed, not open — see
+    // EligibilityService and docs/task03_workflow.md, section 7.
+    private String grade;
+
+    @Column(name = "joined_date")
+    private LocalDate joinedDate;
 
     public Officer() {
     }
@@ -67,5 +78,21 @@ public class Officer {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public LocalDate getJoinedDate() {
+        return joinedDate;
+    }
+
+    public void setJoinedDate(LocalDate joinedDate) {
+        this.joinedDate = joinedDate;
     }
 }

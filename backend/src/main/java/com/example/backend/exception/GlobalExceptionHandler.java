@@ -47,6 +47,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
+    @ExceptionHandler(IneligibleOfficerException.class)
+    public ResponseEntity<Map<String, Object>> handleIneligible(IneligibleOfficerException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("error", "INELIGIBLE_OFFICER");
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    @ExceptionHandler(InvalidEligibilityRuleException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidRule(InvalidEligibilityRuleException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("error", "INVALID_ELIGIBILITY_RULE");
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, Object> body = new LinkedHashMap<>();

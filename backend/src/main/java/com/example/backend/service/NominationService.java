@@ -29,17 +29,20 @@ public class NominationService {
     private final OfficerRepository officerRepository;
     private final TrainingProgrammeRepository programmeRepository;
     private final DepartmentRepository departmentRepository;
+    private final EligibilityService eligibilityService;
 
     public NominationService(
             NominationRepository nominationRepository,
             OfficerRepository officerRepository,
             TrainingProgrammeRepository programmeRepository,
-            DepartmentRepository departmentRepository
+            DepartmentRepository departmentRepository,
+            EligibilityService eligibilityService
     ) {
         this.nominationRepository = nominationRepository;
         this.officerRepository = officerRepository;
         this.programmeRepository = programmeRepository;
         this.departmentRepository = departmentRepository;
+        this.eligibilityService = eligibilityService;
     }
 
     @Transactional
@@ -51,6 +54,10 @@ public class NominationService {
 
         TrainingProgramme programme = programmeRepository.findByIdForUpdate(request.programmeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Training programme not found: " + request.programmeId()));
+
+        // Task 3: eligibility rules run first — an ineligible officer never
+        // reaches the duplicate/capacity checks below. See docs/task03_workflow.md.
+        eligibilityService.checkEligible(officer, programme);
 
         // Application-level duplicate check: fast, and gives a friendly message.
         nominationRepository.findByProgrammeIdAndOfficerId(programme.getId(), officer.getId())

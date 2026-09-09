@@ -23,4 +23,11 @@ public interface NominationRepository extends JpaRepository<Nomination, Long> {
     // Oldest still-waitlisted nomination for a programme — the next person
     // to promote when a confirmed seat is freed up. See docs/task02_workflow.md.
     Optional<Nomination> findFirstByProgrammeIdAndStatusOrderByCreatedAtAsc(Long programmeId, NominationStatus status);
+
+    // Most recent confirmed (i.e. actually attended) session of "the same"
+    // programme for this officer, across every scheduled session sharing a
+    // programme_code — the 12-month cooldown check reads the winner's
+    // session date. See docs/task03_workflow.md, section 4.
+    Optional<Nomination> findFirstByOfficer_IdAndProgramme_ProgrammeCodeAndStatusOrderByProgramme_TrainingDateDesc(
+            Long officerId, String programmeCode, NominationStatus status);
 }

@@ -30,6 +30,13 @@ public class TrainingProgramme {
     @Column(name = "max_participants", nullable = false)
     private Integer maxParticipants;
 
+    // Stable across every scheduled session of "the same" programme (e.g.
+    // this year's and next year's Financial Management Programme both carry
+    // "FIN-MGMT"), unlike title which is free text. Used to group sessions
+    // for the 12-month cooldown rule. See docs/task03_workflow.md, section 3.
+    @Column(name = "programme_code")
+    private String programmeCode;
+
     public Long getId() {
         return id;
     }
@@ -76,5 +83,13 @@ public class TrainingProgramme {
 
     public void setMaxParticipants(Integer maxParticipants) {
         this.maxParticipants = maxParticipants;
+    }
+
+    public String getProgrammeCode() {
+        return programmeCode;
+    }
+
+    public void setProgrammeCode(String programmeCode) {
+        this.programmeCode = programmeCode;
     }
 }
