@@ -129,16 +129,16 @@ For the officer and programme in the request:
 4. **`MIN_YEARS_OF_SERVICE`** row exists and
    `now - officer.joinedDate < threshold` → reject: *"Requires at least 5
    years of service; officer has 3."*
-5. **`COOLDOWN_MONTHS`** (explicit row, or the default of 12) — look up the
+5. **`COOLDOWN_MONTHS`** (explicit row, or the default of 12) - look up the
    officer's most recent `CONFIRMED` nomination for any `TrainingProgramme`
    sharing this one's `programme_code`, whose **session date** (not the
    nomination's `created_at` — the officer participated on the *training*
    date, not the day they registered for it) falls within the cooldown
    window → reject: *"Officer already participated in this programme on
    2025-11-03; not eligible again until 2026-11-03."*
-   `WAITLISTED` or `CANCELLED` nominations don't count — the officer never
+   `WAITLISTED` or `CANCELLED` nominations don't count - the officer never
    actually attended.
-6. All checks pass (or the programme has no rules at all — fully open) →
+6. All checks pass (or the programme has no rules at all - fully open) →
    proceed to the existing duplicate-nomination and capacity checks
    unchanged.
 
@@ -151,14 +151,14 @@ business rule rather than a malformed request).
 
 Rules need to be viewable and editable without a deploy:
 
-- `GET /api/programmes/{id}/eligibility-rules` — list a programme's rules.
-- `POST /api/programmes/{id}/eligibility-rules` — add one
+- `GET /api/programmes/{id}/eligibility-rules` - list a programme's rules.
+- `POST /api/programmes/{id}/eligibility-rules` - add one
   (`{ ruleType, ruleValue }`).
-- `DELETE /api/programmes/{id}/eligibility-rules/{ruleId}` — remove one.
+- `DELETE /api/programmes/{id}/eligibility-rules/{ruleId}` - remove one.
 
 A coordinator sets up "Management Development Programme" by adding a
 `GRADE` row and a `MIN_YEARS_OF_SERVICE` row through this API (or a small
-admin UI on top of it) — no code change, no redeploy, exactly the
+admin UI on top of it) - no code change, no redeploy, exactly the
 requirement in section 1.
 
 ## 6. Process Flow
@@ -180,7 +180,7 @@ flowchart TD
 
 ## 7. Edge Cases
 
-- **Programme with zero rules** — every officer is eligible; this keeps all
+- **Programme with zero rules** - every officer is eligible; this keeps all
   of Task 1 and Task 2's existing programmes (which have no eligibility
   concept today) working unchanged after this ships.
 - **Existing officers have no `grade` / `joined_date`** — both new columns
@@ -188,24 +188,24 @@ flowchart TD
   `grade`/`joined_date` should fail a `GRADE`/`MIN_YEARS_OF_SERVICE` check
   closed (treated as ineligible, with a message asking HR to complete their
   record) rather than silently passing it open.
-- **A programme reused across years with a title rename** — still tracked
+- **A programme reused across years with a title rename** - still tracked
   correctly by `programme_code`, which is what the cooldown groups on, not
   the (freely editable) `title`.
 - **Multiple `DEPARTMENT` rows** — OR semantics (Finance **or** Budget
   **or** Planning), not AND; an officer only needs to match one.
-- **Rule added *after* nominations already exist** — this only gates *new*
+- **Rule added *after* nominations already exist** - this only gates *new*
   nominations going forward; it deliberately doesn't retroactively cancel
   nominations that were valid under the old (or absent) rules.
 
 ## 8. Why This Solves It
 
-- **Rules live in the database, not in `if` statements** — the exact
+- **Rules live in the database, not in `if` statements** - the exact
   requirement stated in the source material: new eligibility criteria for a
   new or existing programme is a data change, not a software change.
 - **Four rule types cover every example given**, composed generically
   (AND across types, OR within a type) rather than one bespoke check per
   named programme.
-- **The 12-month rule is a sensible default, not a special case** — every
+- **The 12-month rule is a sensible default, not a special case** - every
   programme gets it automatically, and any programme that needs a different
   window overrides it with one row, instead of that logic being duplicated
   or hardcoded per programme.
