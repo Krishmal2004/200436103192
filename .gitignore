@@ -1,0 +1,15 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Backend (Gradle)
+backend/.gradle/
+backend/build/
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+Task 01 description.jpeg
+Task 01.jpeg
+backend/.env
