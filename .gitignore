@@ -21,7 +21,6 @@ backend/gradle/wrapper/gradle-wrapper.jar
 backend/gradle/wrapper/gradle-wrapper.properties
 backend/src/main/resources/application.properties
 Task -02.jpeg
-backend/src/main/java/com/example/backend/exception/InvalidNominationStateException.java
 frontend/.vite/deps/_metadata.json
 frontend/.vite/deps/axios.js
 frontend/.vite/deps/axios.js.map
