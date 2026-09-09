@@ -98,7 +98,7 @@ export default function App() {
     <div className="app">
       <header className="page-header">
         <h1>Government Training Management System</h1>
-        <p>Task 1 demo — nominate an officer and see duplicate nominations get blocked in real time.</p>
+        <p>Task 1 demo - nominate an officer and see duplicate nominations get blocked in real time.</p>
       </header>
 
       <div className="card">
