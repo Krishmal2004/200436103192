@@ -7,7 +7,7 @@ by email, into separate Excel sheets. The training coordinator then merges
 these sheets **by hand**. When an officer (e.g. *A. Perera*) is nominated by
 more than one department (e.g. Finance and Administration) for the same
 programme, the duplicate is only caught if the coordinator happens to spot it
-while merging — which becomes unreliable once a programme has 50–100
+while merging - which becomes unreliable once a programme has 50–100
 nominations.
 
 **Root cause:** there is no single shared record that a nomination is checked
@@ -64,7 +64,7 @@ same programme.
 ## 4. Duplicate-Check Logic (applied on every nomination submission)
 
 1. Department selects an **officer_id** (from the master list) and a
-   **programme_id** — never free text.
+   **programme_id** - never free text.
 2. System queries: does a `Nomination` already exist for this
    `(officer_id, programme_id)` pair?
    - **No match** → nomination is saved, status = *Confirmed*, participant
