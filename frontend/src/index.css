@@ -39,6 +39,21 @@ header.page-header p {
   font-size: 1.1rem;
 }
 
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-header h2 {
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
 .field {
   margin-bottom: 14px;
 }
@@ -73,6 +88,26 @@ button.primary {
 
 button.primary:disabled {
   background: #93b4f5;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: #ffffff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+button.secondary:disabled {
+  color: #9ca3af;
   cursor: not-allowed;
 }
 

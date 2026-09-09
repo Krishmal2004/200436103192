@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
-import { getDepartments, getOfficers, getProgrammes, getNominations, createNomination } from './api'
+import { getDepartments, getOfficers, getProgrammes, getNominations, createNomination, createProgramme } from './api'
 import NominationForm from './components/NominationForm'
 import NominationList from './components/NominationList'
+import ProgrammeForm from './components/ProgrammeForm'
 
 export default function App() {
   const [departments, setDepartments] = useState([])
@@ -14,6 +15,9 @@ export default function App() {
 
   const [submitting, setSubmitting] = useState(false)
   const [banner, setBanner] = useState(null) // { type: 'error' | 'success', text }
+
+  const [showProgrammeForm, setShowProgrammeForm] = useState(false)
+  const [creatingProgramme, setCreatingProgramme] = useState(false)
 
   // Load reference data (departments, officers, programmes) once on mount.
   useEffect(() => {
@@ -69,6 +73,25 @@ export default function App() {
     }
   }
 
+  const handleCreateProgramme = async (payload) => {
+    setCreatingProgramme(true)
+    setBanner(null)
+    try {
+      const created = await createProgramme(payload)
+      setProgrammes((prev) => [...prev, created])
+      setSelectedProgrammeId(String(created.id))
+      setShowProgrammeForm(false)
+      setBanner({ type: 'success', text: `Programme "${created.title}" created.` })
+      return true
+    } catch (err) {
+      const data = err?.response?.data
+      setBanner({ type: 'error', text: data?.message || 'Something went wrong creating the programme.' })
+      return false
+    } finally {
+      setCreatingProgramme(false)
+    }
+  }
+
   const selectedProgramme = programmes.find((p) => String(p.id) === String(selectedProgrammeId))
 
   return (
@@ -79,23 +102,41 @@ export default function App() {
       </header>
 
       <div className="card">
-        <h2>Training Programme</h2>
-        <div className="field">
-          <label>Programme</label>
-          <select value={selectedProgrammeId} onChange={(e) => setSelectedProgrammeId(e.target.value)}>
-            {programmes.length === 0 && <option value="">No programmes yet</option>}
-            {programmes.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.title} — {p.trainingDate}
-              </option>
-            ))}
-          </select>
+        <div className="card-header">
+          <h2>Training Programme</h2>
+          {!showProgrammeForm && (
+            <button type="button" className="secondary" onClick={() => setShowProgrammeForm(true)}>
+              + Add Programme
+            </button>
+          )}
         </div>
-        {selectedProgramme && (
-          <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: 0 }}>
-            Venue: {selectedProgramme.venue || '—'} · Trainer: {selectedProgramme.trainer || '—'} ·{' '}
-            {selectedProgramme.confirmedCount}/{selectedProgramme.maxParticipants} confirmed
-          </p>
+
+        {showProgrammeForm ? (
+          <ProgrammeForm
+            onSubmit={handleCreateProgramme}
+            onCancel={() => setShowProgrammeForm(false)}
+            submitting={creatingProgramme}
+          />
+        ) : (
+          <>
+            <div className="field">
+              <label>Programme</label>
+              <select value={selectedProgrammeId} onChange={(e) => setSelectedProgrammeId(e.target.value)}>
+                {programmes.length === 0 && <option value="">No programmes yet</option>}
+                {programmes.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title} — {p.trainingDate}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedProgramme && (
+              <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: 0 }}>
+                Venue: {selectedProgramme.venue || '—'} · Trainer: {selectedProgramme.trainer || '—'} ·{' '}
+                {selectedProgramme.confirmedCount}/{selectedProgramme.maxParticipants} confirmed
+              </p>
+            )}
+          </>
         )}
       </div>
 

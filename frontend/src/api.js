@@ -10,6 +10,8 @@ export const getOfficers = () => api.get('/officers').then((res) => res.data)
 
 export const getProgrammes = () => api.get('/programmes').then((res) => res.data)
 
+export const createProgramme = (payload) => api.post('/programmes', payload).then((res) => res.data)
+
 export const getNominations = (programmeId) =>
   api.get('/nominations', { params: { programmeId } }).then((res) => res.data)
 
