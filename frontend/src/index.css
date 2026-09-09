@@ -121,6 +121,30 @@ header.page-header p {
   font-size: 0.85rem;
 }
 
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.filters-field {
+  margin-bottom: 0;
+  min-width: 160px;
+  flex: 1 1 160px;
+}
+
+.filters-search {
+  flex: 1 1 220px;
+}
+
+.filters-clear {
+  height: 37px;
+}
+
 .form-actions {
   display: flex;
   gap: 10px;
