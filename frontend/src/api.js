@@ -17,4 +17,6 @@ export const getNominations = (programmeId) =>
 
 export const createNomination = (payload) => api.post('/nominations', payload).then((res) => res.data)
 
+export const cancelNomination = (id) => api.delete(`/nominations/${id}`).then((res) => res.data)
+
 export default api

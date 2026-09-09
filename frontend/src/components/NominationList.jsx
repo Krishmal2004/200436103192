@@ -1,4 +1,10 @@
-export default function NominationList({ nominations, loading }) {
+const badgeClassFor = (status) => {
+  if (status === 'CONFIRMED') return 'confirmed'
+  if (status === 'WAITLISTED') return 'waitlisted'
+  return 'cancelled'
+}
+
+export default function NominationList({ nominations, loading, onCancel, cancellingId }) {
   if (loading) {
     return <p className="empty-state">Loading nominations…</p>
   }
@@ -16,6 +22,7 @@ export default function NominationList({ nominations, loading }) {
           <th>Nominated By</th>
           <th>Status</th>
           <th>Submitted At</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -25,11 +32,21 @@ export default function NominationList({ nominations, loading }) {
             <td>{n.employeeNo}</td>
             <td>{n.departmentName}</td>
             <td>
-              <span className={`badge ${n.status === 'CONFIRMED' ? 'confirmed' : 'waitlisted'}`}>
-                {n.status}
-              </span>
+              <span className={`badge ${badgeClassFor(n.status)}`}>{n.status}</span>
             </td>
             <td>{new Date(n.createdAt).toLocaleString()}</td>
+            <td>
+              {n.status !== 'CANCELLED' && onCancel && (
+                <button
+                  type="button"
+                  className="link-danger"
+                  onClick={() => onCancel(n.id)}
+                  disabled={cancellingId === n.id}
+                >
+                  {cancellingId === n.id ? 'Cancelling…' : 'Cancel'}
+                </button>
+              )}
+            </td>
           </tr>
         ))}
       </tbody>

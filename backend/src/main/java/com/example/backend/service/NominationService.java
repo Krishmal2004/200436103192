@@ -15,6 +15,7 @@ import com.example.backend.entity.NominationStatus;
 import com.example.backend.entity.Officer;
 import com.example.backend.entity.TrainingProgramme;
 import com.example.backend.exception.DuplicateNominationException;
+import com.example.backend.exception.InvalidNominationStateException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.DepartmentRepository;
 import com.example.backend.repository.NominationRepository;
@@ -45,10 +46,15 @@ public class NominationService {
     public NominationResponse createNomination(NominationRequest request) {
         Officer officer = officerRepository.findById(request.officerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Officer not found: " + request.officerId()));
-        TrainingProgramme programme = programmeRepository.findById(request.programmeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Training programme not found: " + request.programmeId()));
         Department department = departmentRepository.findById(request.departmentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found: " + request.departmentId()));
+
+        // Lock the programme row before deciding CONFIRMED vs WAITLISTED, so two
+        // nominations racing for the same last seat are serialized instead of both
+        // reading the same confirmed count and both landing as CONFIRMED.
+        // See docs/task02_workflow.md, section 5.
+        TrainingProgramme programme = programmeRepository.findByIdForUpdate(request.programmeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Training programme not found: " + request.programmeId()));
 
         // Application-level duplicate check: fast, and gives a friendly message.
         nominationRepository.findByProgrammeIdAndOfficerId(programme.getId(), officer.getId())
@@ -82,6 +88,40 @@ public class NominationService {
         }
 
         return toResponse(saved);
+    }
+
+    @Transactional
+    public NominationResponse cancelNomination(Long nominationId) {
+        Nomination nomination = nominationRepository.findById(nominationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Nomination not found: " + nominationId));
+
+        if (nomination.getStatus() == NominationStatus.CANCELLED) {
+            throw new InvalidNominationStateException("Nomination is already cancelled.");
+        }
+
+        boolean freedAConfirmedSeat = nomination.getStatus() == NominationStatus.CONFIRMED;
+        Long programmeId = nomination.getProgramme().getId();
+
+        // Lock the programme row for the same reason createNomination does: this
+        // cancel-then-promote must not interleave with a concurrent nomination or
+        // cancellation on the same programme. See docs/task02_workflow.md, section 6.
+        programmeRepository.findByIdForUpdate(programmeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Training programme not found: " + programmeId));
+
+        nomination.setStatus(NominationStatus.CANCELLED);
+        nominationRepository.save(nomination);
+
+        if (freedAConfirmedSeat) {
+            // Promote the oldest still-waitlisted nomination into the seat that just opened up.
+            nominationRepository
+                    .findFirstByProgrammeIdAndStatusOrderByCreatedAtAsc(programmeId, NominationStatus.WAITLISTED)
+                    .ifPresent(next -> {
+                        next.setStatus(NominationStatus.CONFIRMED);
+                        nominationRepository.save(next);
+                    });
+        }
+
+        return toResponse(nomination);
     }
 
     @Transactional(readOnly = true)

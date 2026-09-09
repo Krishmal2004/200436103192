@@ -15,4 +15,8 @@ public interface NominationRepository extends JpaRepository<Nomination, Long> {
     Optional<Nomination> findByProgrammeIdAndOfficerId(Long programmeId, Long officerId);
 
     long countByProgrammeIdAndStatus(Long programmeId, NominationStatus status);
+
+    // Oldest still-waitlisted nomination for a programme — the next person
+    // to promote when a confirmed seat is freed up. See docs/task02_workflow.md.
+    Optional<Nomination> findFirstByProgrammeIdAndStatusOrderByCreatedAtAsc(Long programmeId, NominationStatus status);
 }
