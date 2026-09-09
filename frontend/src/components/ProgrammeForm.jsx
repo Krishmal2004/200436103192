@@ -14,6 +14,7 @@ export default function ProgrammeForm({ onSubmit, onCancel, submitting }) {
   const [venue, setVenue] = useState('')
   const [trainer, setTrainer] = useState('')
   const [maxParticipants, setMaxParticipants] = useState('')
+  const [programmeCode, setProgrammeCode] = useState('')
   const minDate = todayIso()
 
   const handleSubmit = async (e) => {
@@ -27,6 +28,7 @@ export default function ProgrammeForm({ onSubmit, onCancel, submitting }) {
       venue: venue || null,
       trainer: trainer || null,
       maxParticipants: Number(maxParticipants),
+      programmeCode: programmeCode || null,
     })
 
     if (ok) {
@@ -35,6 +37,7 @@ export default function ProgrammeForm({ onSubmit, onCancel, submitting }) {
       setVenue('')
       setTrainer('')
       setMaxParticipants('')
+      setProgrammeCode('')
     }
   }
 
@@ -75,6 +78,20 @@ export default function ProgrammeForm({ onSubmit, onCancel, submitting }) {
           onChange={(e) => setMaxParticipants(e.target.value)}
           required
         />
+      </div>
+
+      <div className="field">
+        <label>Programme Code (optional)</label>
+        <input
+          type="text"
+          placeholder="e.g. FIN-MGMT — defaults to the title if left blank"
+          value={programmeCode}
+          onChange={(e) => setProgrammeCode(e.target.value)}
+        />
+        <p className="field-hint">
+          Give recurring programmes the same code across sessions/years so the
+          12-month re-registration rule can recognise them as "the same" programme.
+        </p>
       </div>
 
       <div className="form-actions">

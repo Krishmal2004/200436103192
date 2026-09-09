@@ -8,6 +8,8 @@ export const getDepartments = () => api.get('/departments').then((res) => res.da
 
 export const getOfficers = () => api.get('/officers').then((res) => res.data)
 
+export const createOfficer = (payload) => api.post('/officers', payload).then((res) => res.data)
+
 export const getProgrammes = () => api.get('/programmes').then((res) => res.data)
 
 export const createProgramme = (payload) => api.post('/programmes', payload).then((res) => res.data)
@@ -21,5 +23,15 @@ export const getAllNominations = () => api.get('/nominations/all').then((res) =>
 export const createNomination = (payload) => api.post('/nominations', payload).then((res) => res.data)
 
 export const cancelNomination = (id) => api.delete(`/nominations/${id}`).then((res) => res.data)
+
+// Task 3 — eligibility rules, configured per programme (see docs/task03_workflow.md).
+export const getEligibilityRules = (programmeId) =>
+  api.get(`/programmes/${programmeId}/eligibility-rules`).then((res) => res.data)
+
+export const createEligibilityRule = (programmeId, payload) =>
+  api.post(`/programmes/${programmeId}/eligibility-rules`, payload).then((res) => res.data)
+
+export const deleteEligibilityRule = (programmeId, ruleId) =>
+  api.delete(`/programmes/${programmeId}/eligibility-rules/${ruleId}`).then((res) => res.data)
 
 export default api

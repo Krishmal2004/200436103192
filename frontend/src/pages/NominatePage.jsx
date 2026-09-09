@@ -6,10 +6,13 @@ import {
   getNominations,
   createNomination,
   createProgramme,
+  createOfficer,
 } from '../api'
 import NominationForm from '../components/NominationForm'
 import NominationList from '../components/NominationList'
 import ProgrammeForm from '../components/ProgrammeForm'
+import OfficerForm from '../components/OfficerForm'
+import EligibilityRulesPanel from '../components/EligibilityRulesPanel'
 
 export default function NominatePage() {
   const [departments, setDepartments] = useState([])
@@ -25,6 +28,9 @@ export default function NominatePage() {
 
   const [showProgrammeForm, setShowProgrammeForm] = useState(false)
   const [creatingProgramme, setCreatingProgramme] = useState(false)
+
+  const [showOfficerForm, setShowOfficerForm] = useState(false)
+  const [creatingOfficer, setCreatingOfficer] = useState(false)
 
   // Load reference data (departments, officers, programmes) once on mount.
   useEffect(() => {
@@ -85,6 +91,24 @@ export default function NominatePage() {
       return false
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleCreateOfficer = async (payload) => {
+    setCreatingOfficer(true)
+    setBanner(null)
+    try {
+      const created = await createOfficer(payload)
+      setOfficers((prev) => [...prev, created])
+      setShowOfficerForm(false)
+      setBanner({ type: 'success', text: `Officer "${created.name}" added.` })
+      return true
+    } catch (err) {
+      const data = err?.response?.data
+      setBanner({ type: 'error', text: data?.message || 'Something went wrong adding the officer.' })
+      return false
+    } finally {
+      setCreatingOfficer(false)
     }
   }
 
@@ -150,20 +174,37 @@ export default function NominatePage() {
                 {selectedProgramme.confirmedCount}/{selectedProgramme.maxParticipants} confirmed
               </p>
             )}
+            <EligibilityRulesPanel programmeId={selectedProgrammeId} departments={departments} />
           </>
         )}
       </div>
 
       <div className="card">
-        <h2>Nominate an Officer</h2>
+        <div className="card-header">
+          <h2>Nominate an Officer</h2>
+          {!showOfficerForm && (
+            <button type="button" className="secondary" onClick={() => setShowOfficerForm(true)}>
+              + Add Officer
+            </button>
+          )}
+        </div>
         {banner && <div className={`banner ${banner.type}`}>{banner.text}</div>}
-        <NominationForm
-          departments={departments}
-          officers={officers}
-          selectedProgrammeId={selectedProgrammeId}
-          onSubmit={handleSubmitNomination}
-          submitting={submitting}
-        />
+        {showOfficerForm ? (
+          <OfficerForm
+            departments={departments}
+            onSubmit={handleCreateOfficer}
+            onCancel={() => setShowOfficerForm(false)}
+            submitting={creatingOfficer}
+          />
+        ) : (
+          <NominationForm
+            departments={departments}
+            officers={officers}
+            selectedProgrammeId={selectedProgrammeId}
+            onSubmit={handleSubmitNomination}
+            submitting={submitting}
+          />
+        )}
       </div>
 
       <div className="card">

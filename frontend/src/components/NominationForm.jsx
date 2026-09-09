@@ -62,7 +62,7 @@ export default function NominationForm({ departments, officers, selectedProgramm
           </option>
           {officersInDepartment.map((o) => (
             <option key={o.id} value={o.id}>
-              {o.name} ({o.employeeNo})
+              {o.name} ({o.employeeNo}){o.grade ? ` — ${o.grade}` : ''}
             </option>
           ))}
         </select>
