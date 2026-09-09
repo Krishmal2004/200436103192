@@ -56,7 +56,7 @@ ProgrammeEligibilityRule
   rule_value           (department_id, grade name, or a number - see below)
 ```
 
-A programme with **no rows of a given type is unrestricted on that axis** —
+A programme with **no rows of a given type is unrestricted on that axis** -
 e.g. the Technical Programme only needs `DEPARTMENT` rows for IT/ICT; it
 doesn't need to also declare "no grade restriction," absence *is* "no
 restriction." Multiple rows of the same type are OR'd together (Finance OR
@@ -66,7 +66,7 @@ Development Programme's `GRADE` and `MIN_YEARS_OF_SERVICE` rules must
 
 | rule_type | rule_value holds | Example |
 |---|---|---|
-| `DEPARTMENT` | a `department_id` (FK, not free text — survives renames) | Finance, Budget, Planning |
+| `DEPARTMENT` | a `department_id` (FK, not free text - survives renames) | Finance, Budget, Planning |
 | `GRADE` | a grade/designation name | "Senior Officer" |
 | `MIN_YEARS_OF_SERVICE` | an integer, as a string | "5" |
 | `COOLDOWN_MONTHS` | an integer, as a string | "12" |
@@ -132,7 +132,7 @@ For the officer and programme in the request:
 5. **`COOLDOWN_MONTHS`** (explicit row, or the default of 12) - look up the
    officer's most recent `CONFIRMED` nomination for any `TrainingProgramme`
    sharing this one's `programme_code`, whose **session date** (not the
-   nomination's `created_at` — the officer participated on the *training*
+   nomination's `created_at` - the officer participated on the *training*
    date, not the day they registered for it) falls within the cooldown
    window → reject: *"Officer already participated in this programme on
    2025-11-03; not eligible again until 2026-11-03."*
@@ -183,7 +183,7 @@ flowchart TD
 - **Programme with zero rules** - every officer is eligible; this keeps all
   of Task 1 and Task 2's existing programmes (which have no eligibility
   concept today) working unchanged after this ships.
-- **Existing officers have no `grade` / `joined_date`** — both new columns
+- **Existing officers have no `grade` / `joined_date`** - both new columns
   need to be nullable (or backfilled) on migration; an officer with a null
   `grade`/`joined_date` should fail a `GRADE`/`MIN_YEARS_OF_SERVICE` check
   closed (treated as ineligible, with a message asking HR to complete their
@@ -191,7 +191,7 @@ flowchart TD
 - **A programme reused across years with a title rename** - still tracked
   correctly by `programme_code`, which is what the cooldown groups on, not
   the (freely editable) `title`.
-- **Multiple `DEPARTMENT` rows** — OR semantics (Finance **or** Budget
+- **Multiple `DEPARTMENT` rows** - OR semantics (Finance **or** Budget
   **or** Planning), not AND; an officer only needs to match one.
 - **Rule added *after* nominations already exist** - this only gates *new*
   nominations going forward; it deliberately doesn't retroactively cancel
