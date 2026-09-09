@@ -132,6 +132,16 @@ public class NominationService {
                 .toList();
     }
 
+    // Full participant register across every programme, for the coordinator's
+    // office-wide view rather than one programme at a time.
+    @Transactional(readOnly = true)
+    public List<NominationResponse> getAllNominations() {
+        return nominationRepository.findAllByOrderByCreatedAtAsc()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     private NominationResponse toResponse(Nomination n) {
         return new NominationResponse(
                 n.getId(),

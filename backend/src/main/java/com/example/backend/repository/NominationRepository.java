@@ -12,6 +12,10 @@ public interface NominationRepository extends JpaRepository<Nomination, Long> {
 
     List<Nomination> findByProgrammeIdOrderByCreatedAtAsc(Long programmeId);
 
+    // Every nomination across every programme — the government office's
+    // full participant register, not filtered to one programme.
+    List<Nomination> findAllByOrderByCreatedAtAsc();
+
     Optional<Nomination> findByProgrammeIdAndOfficerId(Long programmeId, Long officerId);
 
     long countByProgrammeIdAndStatus(Long programmeId, NominationStatus status);

@@ -34,6 +34,13 @@ public class NominationController {
         return nominationService.getNominationsForProgramme(programmeId);
     }
 
+    // Full participant register across every programme — the office-wide
+    // "show all the data" view, not filtered to one programme.
+    @GetMapping("/all")
+    public List<NominationResponse> getAll() {
+        return nominationService.getAllNominations();
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public NominationResponse create(@Valid @RequestBody NominationRequest request) {
