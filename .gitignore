@@ -20,3 +20,17 @@ backend/settings.gradle
 backend/gradle/wrapper/gradle-wrapper.jar
 backend/gradle/wrapper/gradle-wrapper.properties
 backend/src/main/resources/application.properties
+Task -02.jpeg
+backend/src/main/java/com/example/backend/exception/InvalidNominationStateException.java
+frontend/.vite/deps/_metadata.json
+frontend/.vite/deps/axios.js
+frontend/.vite/deps/axios.js.map
+frontend/.vite/deps/chunk-3SOFIYQK.js
+frontend/.vite/deps/chunk-3SOFIYQK.js.map
+frontend/.vite/deps/chunk-HKJ2B2AA.js
+frontend/.vite/deps/chunk-HKJ2B2AA.js.map
+frontend/.vite/deps/package.json
+frontend/.vite/deps/react-dom_client.js
+frontend/.vite/deps/react-dom_client.js.map
+frontend/.vite/deps/react.js
+frontend/.vite/deps/react.js.map
