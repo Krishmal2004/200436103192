@@ -49,10 +49,6 @@ public class NominationService {
         Department department = departmentRepository.findById(request.departmentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found: " + request.departmentId()));
 
-        // Lock the programme row before deciding CONFIRMED vs WAITLISTED, so two
-        // nominations racing for the same last seat are serialized instead of both
-        // reading the same confirmed count and both landing as CONFIRMED.
-        // See docs/task02_workflow.md, section 5.
         TrainingProgramme programme = programmeRepository.findByIdForUpdate(request.programmeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Training programme not found: " + request.programmeId()));
 
@@ -83,7 +79,6 @@ public class NominationService {
         try {
             saved = nominationRepository.save(nomination);
         } catch (DataIntegrityViolationException e) {
-            // Database-level backstop: two requests raced past the check above
             throw new DuplicateNominationException(officer.getName(), "another department", Instant.now());
         }
 
@@ -102,9 +97,6 @@ public class NominationService {
         boolean freedAConfirmedSeat = nomination.getStatus() == NominationStatus.CONFIRMED;
         Long programmeId = nomination.getProgramme().getId();
 
-        // Lock the programme row for the same reason createNomination does: this
-        // cancel-then-promote must not interleave with a concurrent nomination or
-        // cancellation on the same programme. See docs/task02_workflow.md, section 6.
         programmeRepository.findByIdForUpdate(programmeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Training programme not found: " + programmeId));
 

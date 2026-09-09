@@ -31,6 +31,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
+    @ExceptionHandler(DuplicateEmployeeNoException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateEmployeeNo(DuplicateEmployeeNoException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("error", "DUPLICATE_EMPLOYEE_NO");
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
     @ExceptionHandler(InvalidNominationStateException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidState(InvalidNominationStateException ex) {
         Map<String, Object> body = new LinkedHashMap<>();

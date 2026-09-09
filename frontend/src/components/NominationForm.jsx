@@ -5,6 +5,17 @@ export default function NominationForm({ departments, officers, selectedProgramm
   const [officerId, setOfficerId] = useState('')
   const [submittedBy, setSubmittedBy] = useState('')
 
+  // Only offer officers who belong to the selected nominating department.
+  const officersInDepartment = departmentId
+    ? officers.filter((o) => String(o.departmentId) === String(departmentId))
+    : officers
+
+  const handleDepartmentChange = (e) => {
+    setDepartmentId(e.target.value)
+    // The previously selected officer may not belong to the new department.
+    setOfficerId('')
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!selectedProgrammeId || !departmentId || !officerId) return
@@ -28,7 +39,7 @@ export default function NominationForm({ departments, officers, selectedProgramm
     <form onSubmit={handleSubmit}>
       <div className="field">
         <label>Nominating Department</label>
-        <select value={departmentId} onChange={(e) => setDepartmentId(e.target.value)} required>
+        <select value={departmentId} onChange={handleDepartmentChange} required>
           <option value="">Select department…</option>
           {departments.map((d) => (
             <option key={d.id} value={d.id}>
@@ -40,11 +51,18 @@ export default function NominationForm({ departments, officers, selectedProgramm
 
       <div className="field">
         <label>Officer</label>
-        <select value={officerId} onChange={(e) => setOfficerId(e.target.value)} required>
-          <option value="">Select officer…</option>
-          {officers.map((o) => (
+        <select
+          value={officerId}
+          onChange={(e) => setOfficerId(e.target.value)}
+          required
+          disabled={!departmentId}
+        >
+          <option value="">
+            {departmentId ? 'Select officer…' : 'Select a department first…'}
+          </option>
+          {officersInDepartment.map((o) => (
             <option key={o.id} value={o.id}>
-              {o.name} ({o.employeeNo}) — home dept: {o.departmentName}
+              {o.name} ({o.employeeNo})
             </option>
           ))}
         </select>

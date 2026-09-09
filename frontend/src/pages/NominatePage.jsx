@@ -6,7 +6,6 @@ import {
   getNominations,
   createNomination,
   createProgramme,
-  cancelNomination,
 } from '../api'
 import NominationForm from '../components/NominationForm'
 import NominationList from '../components/NominationList'
@@ -27,8 +26,6 @@ export default function NominatePage() {
   const [showProgrammeForm, setShowProgrammeForm] = useState(false)
   const [creatingProgramme, setCreatingProgramme] = useState(false)
 
-  const [cancellingId, setCancellingId] = useState(null)
-
   // Load reference data (departments, officers, programmes) once on mount.
   useEffect(() => {
     getDepartments().then(setDepartments).catch(() => {})
@@ -39,9 +36,9 @@ export default function NominatePage() {
     }).catch(() => {})
   }, [])
 
-  // Re-fetches programmes so confirmedCount stays accurate after a
-  // nomination is created or cancelled (cancelling can promote a waitlisted
-  // nomination, changing confirmedCount without changing the row count).
+  // Re-fetches programmes so confirmedCount stays accurate after a nomination
+  // is created (cancellation, which also affects confirmedCount, now lives
+  // on the All Participants page).
   const refreshProgrammes = useCallback(() => {
     getProgrammes().then(setProgrammes).catch(() => {})
   }, [])
@@ -91,22 +88,6 @@ export default function NominatePage() {
     }
   }
 
-  const handleCancelNomination = async (nominationId) => {
-    setCancellingId(nominationId)
-    setBanner(null)
-    try {
-      await cancelNomination(nominationId)
-      setBanner({ type: 'success', text: 'Nomination cancelled. Anyone next on the waiting list has been promoted.' })
-      refreshNominations(selectedProgrammeId)
-      refreshProgrammes()
-    } catch (err) {
-      const data = err?.response?.data
-      setBanner({ type: 'error', text: data?.message || 'Something went wrong cancelling the nomination.' })
-    } finally {
-      setCancellingId(null)
-    }
-  }
-
   const handleCreateProgramme = async (payload) => {
     setCreatingProgramme(true)
     setBanner(null)
@@ -127,6 +108,10 @@ export default function NominatePage() {
   }
 
   const selectedProgramme = programmes.find((p) => String(p.id) === String(selectedProgrammeId))
+
+  // "Current Nominations" here is the confirmed roster; waitlisted/cancelled
+  // history for the programme is still visible on the All Participants page.
+  const confirmedNominations = nominations.filter((n) => n.status === 'CONFIRMED')
 
   return (
     <>
@@ -184,10 +169,9 @@ export default function NominatePage() {
       <div className="card">
         <h2>Current Nominations</h2>
         <NominationList
-          nominations={nominations}
+          nominations={confirmedNominations}
           loading={loadingNominations}
-          onCancel={handleCancelNomination}
-          cancellingId={cancellingId}
+          emptyMessage="No confirmed nominations yet for this programme."
         />
       </div>
     </>
