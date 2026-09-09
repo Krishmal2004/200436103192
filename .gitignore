@@ -13,3 +13,10 @@ frontend/dist/
 Task 01 description.jpeg
 Task 01.jpeg
 backend/.env
+backend/build.gradle
+backend/gradlew
+backend/gradlew.bat
+backend/settings.gradle
+backend/gradle/wrapper/gradle-wrapper.jar
+backend/gradle/wrapper/gradle-wrapper.properties
+backend/src/main/resources/application.properties
