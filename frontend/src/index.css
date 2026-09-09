@@ -49,6 +49,11 @@ header.page-header p {
   margin: 0;
 }
 
+.participant-count {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
 .form-actions {
   display: flex;
   gap: 10px;

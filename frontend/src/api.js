@@ -15,6 +15,9 @@ export const createProgramme = (payload) => api.post('/programmes', payload).the
 export const getNominations = (programmeId) =>
   api.get('/nominations', { params: { programmeId } }).then((res) => res.data)
 
+// Full participant register across every programme.
+export const getAllNominations = () => api.get('/nominations/all').then((res) => res.data)
+
 export const createNomination = (payload) => api.post('/nominations', payload).then((res) => res.data)
 
 export const cancelNomination = (id) => api.delete(`/nominations/${id}`).then((res) => res.data)

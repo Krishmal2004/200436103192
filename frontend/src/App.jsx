@@ -4,6 +4,7 @@ import {
   getOfficers,
   getProgrammes,
   getNominations,
+  getAllNominations,
   createNomination,
   createProgramme,
   cancelNomination,
@@ -29,6 +30,10 @@ export default function App() {
 
   const [cancellingId, setCancellingId] = useState(null)
 
+  // Full participant register across every programme — the office-wide view.
+  const [allNominations, setAllNominations] = useState([])
+  const [loadingAllNominations, setLoadingAllNominations] = useState(false)
+
   // Load reference data (departments, officers, programmes) once on mount.
   useEffect(() => {
     getDepartments().then(setDepartments).catch(() => {})
@@ -45,6 +50,18 @@ export default function App() {
   const refreshProgrammes = useCallback(() => {
     getProgrammes().then(setProgrammes).catch(() => {})
   }, [])
+
+  const refreshAllNominations = useCallback(() => {
+    setLoadingAllNominations(true)
+    getAllNominations()
+      .then(setAllNominations)
+      .catch(() => setAllNominations([]))
+      .finally(() => setLoadingAllNominations(false))
+  }, [])
+
+  useEffect(() => {
+    refreshAllNominations()
+  }, [refreshAllNominations])
 
   const refreshNominations = useCallback((programmeId) => {
     if (!programmeId) {
@@ -76,6 +93,7 @@ export default function App() {
       })
       refreshNominations(selectedProgrammeId)
       refreshProgrammes()
+      refreshAllNominations()
       return true
     } catch (err) {
       const data = err?.response?.data
@@ -99,6 +117,7 @@ export default function App() {
       setBanner({ type: 'success', text: 'Nomination cancelled. Anyone next on the waiting list has been promoted.' })
       refreshNominations(selectedProgrammeId)
       refreshProgrammes()
+      refreshAllNominations()
     } catch (err) {
       const data = err?.response?.data
       setBanner({ type: 'error', text: data?.message || 'Something went wrong cancelling the nomination.' })
@@ -193,6 +212,23 @@ export default function App() {
           loading={loadingNominations}
           onCancel={handleCancelNomination}
           cancellingId={cancellingId}
+        />
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h2>All Participants</h2>
+          <span className="participant-count">
+            {allNominations.length} nomination{allNominations.length === 1 ? '' : 's'} across all programmes
+          </span>
+        </div>
+        <NominationList
+          nominations={allNominations}
+          loading={loadingAllNominations}
+          onCancel={handleCancelNomination}
+          cancellingId={cancellingId}
+          showProgramme
+          emptyMessage="No nominations have been submitted yet."
         />
       </div>
     </div>
