@@ -78,8 +78,6 @@ public class NominationService {
             saved = nominationRepository.save(nomination);
         } catch (DataIntegrityViolationException e) {
             // Database-level backstop: two requests raced past the check above
-            // at the same instant and the UNIQUE(officer_id, programme_id)
-            // constraint caught what the application check could not.
             throw new DuplicateNominationException(officer.getName(), "another department", Instant.now());
         }
 
