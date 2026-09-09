@@ -1,19 +1,19 @@
-# Task 3 – Training Eligibility: Solution Workflow
+# Task 3 - Training Eligibility: Solution Workflow
 
 ## 1. Problem
 
-Right now, any officer can be nominated for any training programme — the
+Right now, any officer can be nominated for any training programme - the
 system only checks for duplicates (Task 1) and capacity (Task 2). The
 organization wants **eligibility rules**: only officers who meet a
 programme's requirements should be nominable for it. Different programmes
 need genuinely different rules:
 
-- **Financial Management Programme** — restricted to officers in **Finance**,
+- **Financial Management Programme** - restricted to officers in **Finance**,
   **Budget**, or **Planning**.
-- **Technical Programme** — restricted to **IT** / **ICT-related divisions**.
-- **Management Development Programme** — requires **a particular grade or
+- **Technical Programme** - restricted to **IT** / **ICT-related divisions**.
+- **Management Development Programme** - requires **a particular grade or
   designation** *and* **a minimum number of years of service**.
-- **All programmes** — an officer who participated in *the same* training
+- **All programmes** - an officer who participated in *the same* training
   programme within the previous 12 months should not be able to register
   again.
 
@@ -21,14 +21,14 @@ need genuinely different rules:
 change over time, and the organization explicitly does **not** want a
 solution that requires touching the code every time a rule changes. That
 rules out hardcoding logic like `if (programme.title.contains("Financial"))
-{ ... }` — any such approach means every new programme or every changed
+{ ... }` - any such approach means every new programme or every changed
 requirement is a code change and a redeploy.
 
 ## 2. Decided Approach
 
 Model eligibility as **data the coordinator configures per programme**, not
-logic baked into Java. A small, fixed set of **rule types** — department,
-grade, minimum years of service, cooldown — covers every example given, and
+logic baked into Java. A small, fixed set of **rule types** - department,
+grade, minimum years of service, cooldown - covers every example given, and
 a generic evaluator reads whichever rules exist for a programme and checks
 the nominated officer against them. Adding a new *programme* with its own
 department list, or changing an existing programme's minimum years of
@@ -38,7 +38,7 @@ This has an honest boundary, worth stating up front: it removes code changes
 for new *instances* of the four known rule types (a new department
 combination, a new grade requirement, a new threshold, a new cooldown
 period). It does **not** claim to anticipate every conceivable future rule
-type nobody has mentioned yet (e.g. "must hold certification X") — that
+type nobody has mentioned yet (e.g. "must hold certification X") - that
 would need one new rule type added to the evaluator, which is a small,
 isolated change, not a rewrite. That trade-off matches what was actually
 asked for: the four rule shapes in the example are exactly what's supported
@@ -53,7 +53,7 @@ ProgrammeEligibilityRule
   id
   programme_id      → TrainingProgramme
   rule_type           (DEPARTMENT / GRADE / MIN_YEARS_OF_SERVICE / COOLDOWN_MONTHS)
-  rule_value           (department_id, grade name, or a number — see below)
+  rule_value           (department_id, grade name, or a number - see below)
 ```
 
 A programme with **no rows of a given type is unrestricted on that axis** —
